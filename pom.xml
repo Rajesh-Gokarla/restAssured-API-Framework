@@ -1,0 +1,203 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.api.bdd</groupId>
+    <artifactId>api-bdd-framework</artifactId>
+    <version>1.0.0</version>
+
+    <!-- ================= PROPERTIES ================= -->
+    <properties>
+        <!-- Java -->
+        <java.version>17</java.version>
+
+        <!-- Encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Versions -->
+        <restassured.version>5.5.0</restassured.version>
+        <cucumber.version>7.18.0</cucumber.version>
+        <testng.version>7.10.2</testng.version>
+        <jackson.version>2.18.0</jackson.version>
+        <slf4j.version>2.0.16</slf4j.version>
+        <logback.version>1.5.8</logback.version>
+        <wiremock.version>3.0.1</wiremock.version>
+
+        <!-- Execution -->
+        <thread.count>4</thread.count>
+    </properties>
+
+    <!-- ================= DEPENDENCIES ================= -->
+    <dependencies>
+
+        <!-- REST ASSURED -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${restassured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- CUCUMBER -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TESTNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JACKSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- WIREMOCK -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>5.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        
+    </dependencies>
+
+    <!-- ================= BUILD ================= -->
+    <build>
+        <plugins>
+
+            <!-- COMPILER -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>${java.version}</release>
+                </configuration>
+            </plugin>
+
+            <!-- ADD test-platform AS TEST SOURCE -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+
+                    <!-- Java sources -->
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/test-platform</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+
+                    <!-- Resources -->
+                    <execution>
+                        <id>add-test-resource</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/test-platform/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- TEST EXECUTION -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <includes>
+                        <include>**/TestRunner.java</include>
+                    </includes>
+
+                    <!-- Encoding -->
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+
+                    <!-- Parallel -->
+                    <parallel>methods</parallel>
+                    <threadCount>${thread.count}</threadCount>
+
+                    <!-- Cucumber -->
+                    <systemPropertyVariables>
+                        <cucumber.features>${cucumber.features}</cucumber.features>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- ================= PROFILES ================= -->
+    <profiles>
+
+        <profile>
+            <id>practice</id>
+            <properties>
+                <cucumber.features>
+                    features/createUser.feature,
+                    features/modifyUser.feature,
+                    features/deleteUser.feature
+                </cucumber.features>
+            </properties>
+        </profile>
+
+    </profiles>
+
+</project>
