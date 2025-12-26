@@ -9,51 +9,43 @@ import java.util.Properties;
 public class Config {
 
     private static final Properties ENV = new Properties();
-    private static final Properties URLS = new Properties();
-    private static final Properties AREA = new Properties();
 
     static {
         try {
-            load("config/env.properties", ENV);
+            Properties selector = new Properties();
+            load("config/env.properties", selector);
 
-            String env = System.getProperty("env", ENV.getProperty("env"));
-            String area = System.getProperty("area", ENV.getProperty("area"));
+            String env = System.getProperty("env", selector.getProperty("env"));
+            if (env == null) throw new RuntimeException("env not specified");
 
-            if (env == null || area == null) {
-                throw new RuntimeException("env/area not specified");
-            }
+            load("environments/" + env + ".properties", ENV);
 
-            load("config/" + env + ".properties", URLS);
-            load("area/" + area + ".properties", AREA);
         } catch (Exception e) {
-            throw new RuntimeException("Config load failed", e);
+            throw new RuntimeException("Config init failed", e);
         }
     }
 
-    private static void load(String path, Properties props) throws Exception {
+    private static void load(String path, Properties p) throws Exception {
         try (InputStream is =
                      Config.class.getClassLoader().getResourceAsStream(path)) {
-            if (is == null) throw new RuntimeException("Missing file: " + path);
-            props.load(is);
+            if (is == null) throw new RuntimeException("Missing: " + path);
+            p.load(is);
         }
     }
 
     public static String baseUrl(Service service) {
-        return URLS.getProperty(service.name() + ".base.url");
+        return ENV.getProperty(service.name());
+    }
+
+    public static String baseUrl(String service) {
+        return ENV.getProperty(service);
     }
 
     public static String endpoint(Operation op) {
-        return AREA.getProperty(op.name());
+        return ENV.getProperty(op.name());
     }
 
     public static String value(String key) {
-        return URLS.getProperty(key);
-    }
-
-    public static String get(String key) {
-        String v = AREA.getProperty(key);
-        if (v == null) v = URLS.getProperty(key);
-        if (v == null) v = ENV.getProperty(key);
-        return v;
+        return ENV.getProperty(key);
     }
 }
