@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-5level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Default level -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Silence noisy internals -->
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="io.restassured" level="WARN"/>
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="org.testng" level="WARN"/>
+
+</configuration>

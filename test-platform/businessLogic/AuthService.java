@@ -14,7 +14,7 @@ public class AuthService {
     public static void generateToken() {
 
         var request = RequestBuilder.build(
-                (String) Config.baseUrl(Service.AUTH_SERVICE.name()),
+                Config.baseUrl(Service.AUTH_SERVICE),
                 Map.of("Content-Type", "application/json"),
                 """
                 {
@@ -36,9 +36,8 @@ public class AuthService {
             throw new RuntimeException("Auth API failed");
         }
 
-        String token = response.jsonPath().getString(
-                Config.value("TOKEN_JSON_PATH")
-        );
+        String token = response.jsonPath()
+                .getString(Config.value("TOKEN_JSON_PATH"));
 
         TestContext.put("ACCESS_TOKEN", token);
     }
