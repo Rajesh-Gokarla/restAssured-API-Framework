@@ -2,10 +2,6 @@ package authHandling;
 
 import io.restassured.specification.RequestSpecification;
 
-public class noAuth implements authStrategy {
-     
-    @Override
-    public void apply(RequestSpecification request) {
-
-    }
+public class NoAuth implements AuthStrategy {
+    public void apply(RequestSpecification request) {}
 }

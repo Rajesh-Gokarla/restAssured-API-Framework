@@ -5,15 +5,24 @@ import io.restassured.specification.RequestSpecification;
 
 import java.util.Map;
 
-public class requestBuilder {
+public class RequestBuilder {
 
-    public static RequestSpecification buildRequest(String baseUri, Map<String, String> headers, Object body) {
+    public static RequestSpecification build(
+            String baseUrl,
+            Map<String, String> headers,
+            Object body
+    ) {
 
-        RequestSpecification request = RestAssured
-                .given()
-                .baseUri(baseUri)
-                .headers(headers);
+        RequestSpecification request =
+                RestAssured.given()
+                        .baseUri(baseUrl);
 
+        // Apply headers if provided
+        if (headers != null && !headers.isEmpty()) {
+            request.headers(headers);
+        }
+
+        // Apply body if provided
         if (body != null) {
             request.body(body);
         }

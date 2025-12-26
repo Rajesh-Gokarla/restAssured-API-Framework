@@ -1,26 +1,19 @@
 package authHandling;
 
-import config.config;
+import config.Config;
 
-public class authFactory {
+public class AuthFactory {
 
-    public static authStrategy getAuth(authTypes type) {
+    public static AuthStrategy getAuth() {
+        AuthType type = AuthType.valueOf(
+                Config.value("AUTH_TYPE")
+        );
 
         switch (type) {
-
-            case BASIC:
-                return new basicAuth(
-                        config.get("basic.username"),
-                        config.get("basic.password")
-                );
-
             case BEARER:
-            case OAUTH2:
-                return new bearerAuth(tokenManager.getToken());
-
-            case NO_AUTH:
+                return new BearerAuth();
             default:
-                return new noAuth();
+                return new NoAuth();
         }
     }
 }

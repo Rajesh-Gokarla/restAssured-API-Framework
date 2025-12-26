@@ -21,11 +21,12 @@
 
     <dependencies>
 
-        <!-- REST ASSURED -->
+        <!-- REST ASSURED (TEST ONLY) -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${restassured.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- CUCUMBER -->
@@ -33,12 +34,14 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-testng</artifactId>
             <version>${cucumber.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- TESTNG -->
@@ -67,6 +70,7 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -74,6 +78,7 @@
     <build>
         <plugins>
 
+            <!-- JAVA VERSION -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -83,13 +88,14 @@
                 </configuration>
             </plugin>
 
-
-            <!-- Tell Maven that test-platform is test source -->
+            <!-- ADD test-platform AS TEST SOURCE -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <executions>
+
+                    <!-- Java sources -->
                     <execution>
                         <id>add-test-source</id>
                         <phase>generate-test-sources</phase>
@@ -98,13 +104,31 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>test-platform</source>
+                                <source>${project.basedir}/test-platform</source>
                             </sources>
                         </configuration>
                     </execution>
+
+                    <!-- Resources -->
+                    <execution>
+                        <id>add-test-resource</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/test-platform/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 
+            <!-- TEST EXECUTION -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -113,6 +137,7 @@
                     <includes>
                         <include>**/TestRunner.java</include>
                     </includes>
+                    <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
             </plugin>
 

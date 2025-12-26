@@ -3,7 +3,7 @@ package common;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
-public class apiActions {
+public class ApiActions {
 
     public static Response get(RequestSpecification request, String endpoint) {
         return request.when().get(endpoint);
